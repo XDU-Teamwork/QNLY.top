@@ -1,0 +1,25 @@
+
+<script>
+  // Get the value of the 'link' parameter from the URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectUrl = urlParams.get('link');
+
+  // Function to validate URL format
+  function isValidUrl(url) {
+    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(url);
+  }
+
+  // Redirect to the specified URL
+  if (redirectUrl && isValidUrl(redirectUrl)) {
+    window.location.href = redirectUrl;
+  } else {
+    // Redirect to fallback page
+    window.location.href = 'fallback.html';
+  }
+</script>

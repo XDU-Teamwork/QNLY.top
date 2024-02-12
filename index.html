@@ -1,18 +1,338 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-
+<!DOCTYPE HTML>
 <html>
-<head>
-<title>⚡QNLanYang⚡</title>
-<style>
-html { color-scheme: light dark; }
-body { width: 35em; margin: 0 auto;
-font-family: Tahoma, Verdana, Arial, sans-serif; }
-</style>
-</head>
-<body>
-<h1>这是 全能岚漾（QNLanYang） 的一个网页服务器</h1>
-<p>这里是一些网页导航：<br/>
-<a href="https://www.qnlanyang.top/happy-new-year/fireworks/">赛博烟花</a></p>
-</body>
+	<head>
+		<title>✨QNLanYang✨</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="js/vue.min.js" language="JavaScript"></script>
+		<script src="js/jquery-3.4.1.min.js"></script>
+		<script src="js/html2canvas.min.js" async="async"></script>
+		<style>
+			img {
+				border-radius: 10px;
+			}
+		</style>
+	</head>
+
+	<body class="is-preload">
+
+		<!-- Loader -->
+		<link rel="stylesheet" href="assets/css/loader.css" />
+		<div class="loader">
+		  <div class="container">
+		    <h1>💫</h1>
+		    <p>稍等</p>
+		    <p>片刻</p>
+		  </div>
+		</div>
+		
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main">
+						<!-- Screenshot Button -->
+						<span style="display: flex; position: fixed; top: 2em; right: 2em; opacity: 0.65; font-size: 0.8em;" v-show="backButton"><button class="button small" @click="screenShot" id="screenshot">保存网页截图</button></span>
+
+						<!-- Welcome Message and Contacts -->
+						<header v-show="Contacts">
+							<span class="avatar"><img src="images/avatar.jpg" alt="" style="width: 122px; height: 122px;" /></span>
+							<h1>全能岚漾的小站</h1>
+							<transition-group name="fade">
+								<div v-show="defaults" key="text">
+									<p>你好👋</p>
+									<p>欢迎光临我的小网页，我还在学习相关的技术，如果有哪里做得不够好的还请多多包涵。</p>
+									<p>感兴趣的话可以点击下方的联系方式看看我的作品，或者 开始探索 查收更多惊喜。</p>
+									<p>还可以从屏幕下方的入口进入网址导航，同时也是一个非常美观实用的起始页哦！</p>
+									<button class="button small fit" @click="showAbout" v-bind:disabled="onTransition==1">开始探索！</button>
+								</div>
+								<div v-for="item in contacts" v-if="item.show" key="item.name" v-html="item.content"></div>
+								<button class="button small" key="button" @click="hideContact(true)" style="opacity: 0.55;" v-show="backButton">返回</button>
+							</transition-group>
+						</header>
+						<hr />
+						<footer v-show="Contacts">
+							<ul class="icons">
+								<li v-for="item in contacts"><a @click="showContact(item.name)" :class="item.icon">{{item.desc}}</a></li>
+							</ul>
+						</footer>
+
+						<!-- Page container -->
+						<header v-show="info">
+							<transition-group name="fade">
+								<h1 key="title">{{ title }}</h1>
+								<p key="text" v-for="text in texts">{{ text }}</p>
+								<div v-html="html" key="html"></div>
+								<img v-bind:src="img" key="img" style="width: 95%; height: auto;" v-for="img in imgs" />
+								<div key="buttons">
+									<button class="button small" v-bind:disabled="(nowPage < startPage || onTransition==1)" @click="navigate(-1)">上一页</button>
+									<button class="button small" v-bind:disabled="(nowPage >= endPage - 2 || onTransition==1)" @click="navigate(1)">下一页</button>
+								</div>
+								<hr key="br" />
+								<button @click="returnToContact" key="button" class="button fit" v-bind:disabled="onTransition==1">首页</button>
+							</transition-group>
+						</header>
+					</section>
+
+				<!-- Footer -->
+					<footer id="footer"></footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script>
+				if ('addEventListener' in window) {
+					window.addEventListener('load', function() { 
+						document.body.className = document.body.className.replace(/\bis-preload\b/, '');
+					});
+					document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+				}
+			</script>
+		<!-- Vuejs -->
+			<script language="javascript">
+				var mainsec = new Vue({
+					el:'#main',
+					data:{
+						title:"", // The title of one page
+						html:"", // HTML text of one page
+						texts:[], // Pure texts of one page
+						imgs:[], // Image url of a page's images
+						
+						startPage: 1, // First page of the website
+						endPage: 3, // The last page of the website
+						
+						defaults: 1, // Show welcome message
+						Contacts:1, // Detect if to show contacts
+						info:0, // If to show designed pages
+						deg:0, // Main section rotate deg
+
+						backButton:false,
+
+						/*          Change things below this line               */
+						//Contact info
+						contacts:[
+							// {
+							// 	name:"Wechat",
+							// 	icon:"icon brands fa-weixin",
+							// 	desc:"微信",
+							// 	content:"<img src='images/demoQR.png' class='qr' />",
+							// 	show:false
+							// },
+							// {
+							// 	name:"QQ",
+							// 	icon:"icon brands fa-qq",
+							// 	desc:"QQ",
+							// 	content:"<img src='images/demoQR.png' class='qr' /><h2>QQ:XXXXXX</h2>",
+							// 	show:false
+							// },
+							{
+								name: "Bilibili",
+								icon: "icon brands fa-youtube",
+								desc: "哔哩哔哩",
+								content: "<br /><a href='https://space.bilibili.com/24363612' target='_blank'>[哔哩哔哩](https://space.bilibili.com)</a>",
+								show: false
+							},
+							{
+								name:"Github",
+								icon:"icon brands fa-github",
+								desc:"Github",
+								content:"<br /><a href='https://Github.com/QNLanYang' target='_blank'><img src='https://img.shields.io/badge/Github-QNLanYang-brightgreen.svg' alt='Github' /></a><br /><a href='https://Github.com/QNLanYang' target='_blank'>[Github](https://Github.com/QNLanYang)</a>",
+								show:false
+							}
+						],
+
+						//Pages content
+						page:[
+							{
+								title:"资深B站用户",
+								texts:[""],
+								html:"<p>是一名普普通通UP主，视频总播放量超过260w。</p><p>深度参与微电影<a href='https://www.bilibili.com/video/BV12S4y1z7Ms' target='_blank'><em><u>《让反卷飞》</u></em></a>全流程，影片发布于B站，全长约25min。欢迎围观！</p><p>近期更新频率较低，质量欠佳，部分精力转移至GitHub开源社区。<br>详情见下一页……</p>",
+								imgs:["images/fanjuancover.jpg"]
+							},
+							{
+								title:"开源社区贡献者",
+								texts:["活跃于全球最大代码托管平台 GitHub，提交 PR 和 issue，为开源社区贡献一份自己的力量。","贡献过的项目有："],
+								html:"<p style='font-size:0.5em'>为 Python 聊天机器人框架 <a href='https://nonebot.dev/docs/' target='_blank'>Nonebot</a>开发了基于清华团队大语言模型<a href='https://github.com/THUDM/ChatGLM-6B' target='_blank'> ChatGLM-6B </a>API 的插件并登陆官方商店</p><p style='font-size:0.5em'>sena-nana/nonebot-plugin-novelai</p><p style='font-size:0.5em'>Alpaca4610/nonebot-plugin-chatgpt-turbo</p><p style='font-size:0.5em'>imClumsyPanda/ChatGLM-6B-API</p>",
+								imgs:["images/Github-Achievement-Star.png"]
+							},
+							{
+								title:"探索这个网站",
+								texts:["这是我第一次接触网站搭建，我喜欢加些新奇玩意进去，要不要看看下面这个网页导航呢？","说不定会有什么好玩的东西在里面。"],
+								imgs:[""],
+								html:"👉<a href='navigation/' target='_blank'>岚漾小站の导航</a>👈"
+							},
+							{
+								title:"编不出来了",
+								texts:["后面实在是想不出什么高大上的说辞了，"],
+								html:"<a onclick=\"todonate()\" style=\"color:#66aacc; background-color:#f0a1a8; border-radius: 0.3em; padding: 0.2em; cursor: pointer;\"><<u>Donate!</u>></a><br /><p style=\"color:#ccc; font-size:0.7em;\">Last updated: Feb. 12th, 2024<p>",
+								imgs:[""]
+							},
+							{
+								title:"Eastern egg page!",
+								texts:["Can only access with ?page=#"],
+								html:"<a href='https://github.com/Jiaocz/Personal-page' target='_blank'>Origin project</a>"
+							}
+						],
+						/*            Change ends here                 */
+
+						nowPage:0, // Pointer to current page
+						onTransition:0 //If the transition animation is on
+					},
+					methods: {
+						showContact: function(name){
+							let num = 0
+							for(let i = 0; i < this.contacts.length; i++){
+								if(this.contacts[i].name == name){
+									num = i
+									break
+								}
+							}
+							
+							this.hideContact(false)
+							this.defaults = 0
+							clearTimeout(this.timer)
+							this.timer = setTimeout(()=>{
+								this.contacts[num].show = true
+								this.backButton = true
+							},500)
+							
+						},
+						hideContact: function(neededDefault = true){
+							for(i = 0; i < this.contacts.length; i++){
+								this.contacts[i].show = false
+							}
+							clearTimeout(this.timer)
+							if(neededDefault == true){
+								this.backButton = false
+								this.timer = setTimeout(()=>{
+									this.defaults = 1
+								},500)
+							}
+							
+						},
+						showAbout: function(){
+							this.rotateCard(-360,1,"Y")
+
+							var that = this
+							setTimeout(function(){
+								that.info = 1
+								that.Contacts = 0
+							},400)
+						},
+						returnToContact: function(){
+							this.rotateCard(360,1,"Y")
+							var that = this
+							setTimeout(function(){
+								that.info = 0
+								that.Contacts = 1
+							},400)
+						},
+						rotateCard: function(deg,time,axis){
+							this.onTransition = 1
+							this.deg += deg
+							var ele = document.getElementById('main')
+							ele.style.transition = "transform " + time + "s 0s"
+							ele.style.transform = "rotate" + axis + "(" +this.deg + "deg)"
+							var that = this
+							setTimeout(function(){that.onTransition = 0},time*1000)
+						},
+						loadPage: function(){
+							this.title = this.page[this.nowPage].title
+							this.texts = this.page[this.nowPage].texts
+							this.html = this.page[this.nowPage].html
+							this.imgs = this.page[this.nowPage].imgs
+						},
+						navigate: function(m){
+							if(m==1){
+								this.nowPage++
+								this.rotateCard(-360,1,"Y")
+								setTimeout("mainsec.loadPage()",400)
+							}
+							if(m==-1){
+								this.nowPage--
+								this.rotateCard(+360,1,"Y")
+								setTimeout("mainsec.loadPage()",400)
+							}
+						},
+						screenShot: function(){
+							var button = document.getElementById("screenshot");
+							button.disabled = true;
+							button.innerHTML = "截图中…";
+							html2canvas(document.body).then(canvas => {
+								var w = window.open();
+								w.document.title = "保存截图";
+								var i = w.document.createElement("img");
+								w.document.body.appendChild(i);
+								i.src = canvas.toDataURL('image/jpg');
+								w.alert("长按图片或直接保存图片即可");
+								button.innerHTML = "保存网页截图";
+								button.disabled = false;
+							});
+						}
+					},
+					mounted:function(){
+						this.loadPage()
+						this.startPage = 1
+						this.endPage = this.page.length
+					}
+				});
+			</script>
+			<style>
+				.fade-enter-active, .fade-leave-active {
+					transition: all .5s;
+				}
+				.fade-enter, .fade-leave-to {
+					opacity: 0;
+					transform: scale(0%,0%);
+				}
+				.qr {
+					text-align: center;
+					width: 80%;
+					height: 80%;
+				}
+			</style>
+			<script>
+				let FirstTriggered = true;
+				function loaded(){
+					timeout = FirstTriggered ? 1200 : 0;
+					var page = getQueryVariable("page");
+					if(page>=mainsec.startPage-1&&page<=mainsec.endPage-1&&page){
+						var m = mainsec
+						mainsec.nowPage = page - 1;
+						setTimeout(function(){
+							m.rotateCard(-360,1,"Y")
+							setTimeout(function(){
+								m.loadPage()
+								m.info = 1
+								m.Contacts = 0
+							},400)
+						},timeout);
+					}
+					if(FirstTriggered){
+						$("body").on("dblclick","img",function(){window.open(this.src)});
+					}
+					if(getQueryVariable("showContacts")||getQueryVariable("showcontacts")){
+							var url;
+							var browser = navigator.userAgent.toLowerCase();
+							if(mainsec.info == 1){
+								mainsec.returnToContact()
+							}
+							if (browser.match(/MicroMessenger/i) == 'micromessenger') {
+								//微信浏览器
+								url = "https://u.wechat.com/EO3JtzoXctOZXiAG8tvYHuI";
+								setTimeout(function(){mainsec.showContact("Wechat")},1500);
+							} else if(browser.indexOf(' qq') != -1 && browser.indexOf('mqqbrowser') != -1){
+								//qq内置浏览器
+								url = "https://qm.qq.com/cgi-bin/qm/qr?k=OZm0covTGqrELIwI0XKV6LxlKsCcLIsm";
+								setTimeout(function(){mainsec.showContact("QQ")},1500);
+							}
+					}
+					
+					FirstTriggered = false
+				}
+			</script>
+			<script src="js/common.js"></script>
+	</body>
 </html>
