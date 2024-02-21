@@ -1,0 +1,3 @@
+var li = document.createElement('li');
+li.innerHTML = '<a href="https://github.com/QNLanYang/QNLanYang.github.io" rel="noopener" target="_blank"><img style="vertical-align:bottom;height:1.2em;border-radius:0" src="https://img.shields.io/github/stars/QNLanYang/QNLanYang.github.io?style=social" /></a>';
+document.querySelectorAll("footer#footer > ul.copyright")[document.querySelectorAll("footer#footer > ul.copyright").length - 1].appendChild(li);

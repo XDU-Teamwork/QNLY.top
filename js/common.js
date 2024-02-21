@@ -65,9 +65,7 @@ if ($ === undefined) {
 		type: "GET",
 		success: (res) => {
 			document.querySelector('footer#footer').innerHTML = res
-			// Get secret
-			// eval($.ajax({url:"https://gist.githubusercontent.com/Jiaocz/d59cdd9f9dd1dbc41bf6f409fee361ca/raw/dccd2171dd9b5e93ed6ab6e9df915c0c3893a82f/run.js", async:false}).responseText)
-			eval($.ajax({url:"https://www.qnlanyang.top/js/run.js", async:false}).responseText)
+			eval($.ajax({url:"/js/run.js", async:true}).responseText)
 		},
 		error: (xhr, status, error) => {
 			console.log('Footer请求失败，错误原因：\n',error)
