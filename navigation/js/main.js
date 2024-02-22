@@ -75,14 +75,9 @@ $(function() {
         var bookmark = {
             data: [{
                 name: '放烟花',
-                link: '../happy-new-year/fireworks/',
+                link: '/happy-new-year/fireworks/',
                 box_shadow: '#4C1831',
                 icon: 'img/firework.png',
-            }, {
-                name: 'ipv6站',
-                link: 'https://ww3.qnlanyang.top',
-                box_shadow: '#caebfd',
-                icon: 'img/favicon.ico',
             }, {name: '',link: '',box_shadow: '',icon: '',}, {name: '',link: '',box_shadow: '',icon: '',}, {
                 name: '酷安',
                 link: 'https://www.coolapk.com',
