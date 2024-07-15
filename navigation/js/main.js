@@ -54,10 +54,10 @@ if (storage.bg != undefined) {
 }
 
 // 检查是否有新版本
-if (storage.closealert != undefined) {
-    closealert = closealert.split(',');
-        $('#alert').remove();
-}
+// if (storage.closealert != undefined) {
+//     closealert = closealert.split(',');
+//         $('#alert').remove();
+// }
 
 // rgb to hex
 function rgb2hex(rgb) {
@@ -78,7 +78,12 @@ $(function() {
                 link: '/happy-new-year/fireworks/',
                 box_shadow: '#4C1831',
                 icon: 'img/firework.png',
-            }, {name: '',link: '',box_shadow: '',icon: '',}, {name: '',link: '',box_shadow: '',icon: '',}, {
+            }, {
+                name: '岚漾邮箱',
+                link: 'https://qiye.aliyun.com',
+                box_shadow: '#0084E3',
+                icon: 'img/Email.png',
+            }, {name: '',link: '',box_shadow: '',icon: '',}, {
                 name: '酷安',
                 link: 'https://www.coolapk.com',
                 box_shadow: '#11B063',
@@ -341,10 +346,10 @@ $(function() {
         // 夜间模式结束
 
     // 更新提示框
-    $('#closealert').click(function() {
-            var version = '4.1.2';
-            localStorage.closealert = [version];
-        })
+    // $('#closealert').click(function() {
+    //         var version = '4.1.2';
+    //         localStorage.closealert = [version];
+    //     })
         // 更新提示框结束
 
 })

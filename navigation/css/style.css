@@ -43,7 +43,7 @@ ul {
 @media (min-width: 768px) {
     /*大屏*/
     #main {
-        background: url(../img/bg.jpg) no-repeat;
+        background: url(../img/bg.jpg),url(../img/bg-night.jpg) no-repeat;
         background-attachment: fixed;
         background-size: cover;
     }
