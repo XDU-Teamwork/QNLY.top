@@ -39,7 +39,7 @@ if (storage.data != undefined) {
 
 if (storage.night != undefined) {
     night = night.split(',');
-    console.log(night);
+    // console.log(night);
     $('#main').css('background-color', night[0]); //主界面
     $('#menu').css('background-color', night[1]); //侧栏
     document.getElementById("night").innerHTML = night[2];
@@ -75,7 +75,7 @@ $(function() {
         var bookmark = {
             data: [{
                 name: '放烟花',
-                link: '/happy-new-year/fireworks/',
+                link: '../happy-new-year/fireworks/',
                 box_shadow: '#4C1831',
                 icon: 'img/firework.png',
             }, {
@@ -334,14 +334,16 @@ $(function() {
                 });
                 blockquote.css('color', 'black');
             }
-            var mainbg = rgb2hex($('#main').css('background-color'));
-            var menubg = rgb2hex($('#menu').css('background-color'));
-            var inner = document.getElementById("night").innerHTML;
-            var libg = rgb2hex(li.css('background-color'));
-            var lico = rgb2hex(li.css('color'));
-            var blockquoteco = rgb2hex(blockquote.css('color'));
-            // storage.night = [mainbg, menubg, inner, libg, lico, blockquoteco];
-            // localStorage.clear()
+            setTimeout(function(){
+                var mainbg = rgb2hex($('#main').css('background-color'));
+                var menubg = rgb2hex($('#menu').css('background-color'));
+                var inner = document.getElementById("night").innerHTML;
+                var libg = rgb2hex(li.css('background-color'));
+                var lico = rgb2hex(li.css('color'));
+                var blockquoteco = rgb2hex(blockquote.css('color'));
+                storage.night = [mainbg, menubg, inner, libg, lico, blockquoteco];
+                // localStorage.clear()
+            }, 500);
         })
         // 夜间模式结束
 
@@ -357,7 +359,20 @@ $(function() {
 // 显示/干掉壁纸
 var width = $(document).width();
 $('#bg').click(function() {
-    width < 768 ? ($('#main').css('background-image') == 'none' ? ($('#main').css('background-image', 'url(img/bg-xs.jpg)')) : ($('#main').css('background-image', 'none'))) : $('#main').css('background-image') == 'none' ? ($('#main').css('background-image', 'url(img/bg.jpg)')) : ($('#main').css('background-image', 'none'));
+    if (width < 768) {
+        if ($('#main').css('background-image') == 'none') {
+            $('#main').css('background-image', 'url(img/bg-xs.jpg)');
+        } else {
+            $('#main').css('background-image', 'none');
+        }
+    } else {
+        if ($('#main').css('background-image') == 'none') {
+            if (time < 6 || time > 17) $('#main').css('background-image', 'url(img/bg-night.jpg)');
+            else $('#main').css('background-image', 'url(img/bg.jpg)');
+        } else {
+            $('#main').css('background-image', 'none');
+        }
+    }
     var background = $('#main').css('background-image');
     storage.bg = [background];
 })
@@ -378,15 +393,18 @@ var d = new Date();
 var time = d.getHours();
 if (time < 24) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 晚上好🌃";
+    if (storage.bg != 'none') $('#main').css('background-image', 'url(img/bg-night.jpg)');
 }
 if (time < 18) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 下午好🍵";
+    if (storage.bg != 'none') $('#main').css('background-image', 'url(img/bg.jpg)');
 }
 if (time < 12) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 早啊🌞";
 }
 if (time < 5) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 早点睡哦😪";
+    if (storage.bg != 'none') $('#main').css('background-image', 'url(img/bg-night.jpg)');
 }
 //title问候语结束
 

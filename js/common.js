@@ -3,7 +3,7 @@
 (function(){
 	var se = document.createElement("script");
 	se.type = "text/javascript";
-	se.src = "/js/loader.js";
+	se.src = "js/loader.js";
 	document.getElementsByTagName("head")[0].appendChild(se);
 })();
 
@@ -60,12 +60,12 @@ if ($ === undefined) {
 	console.log("jQuery is not loaded well, footer cannot load");
 } else {
 	$.ajax({
-		url: "/footer.html",
+		url: "footer.html",
 		dataType: "html",
 		type: "GET",
 		success: (res) => {
 			document.querySelector('footer#footer').innerHTML = res
-			eval($.ajax({url:"/js/run.js", async:true}).responseText)
+			eval($.ajax({url:"js/run.js", async:true}).responseText)
 		},
 		error: (xhr, status, error) => {
 			console.log('Footer请求失败，错误原因：\n',error)
