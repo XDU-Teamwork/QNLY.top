@@ -4,9 +4,9 @@
 
 _既然买了域名，那就要让他发挥作用嘛_
 
-[qnlanyang.top](https://qnlanyang.top)
+[qnly.top](https://qnly.top)
 
-## 什么是 QNLanYang？
+## 什么是 QNLY？
 
 - 全(Quan) 能(Neng) 岚(Lan) 漾(Yang)
 
