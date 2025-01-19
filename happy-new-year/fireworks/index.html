@@ -44,7 +44,7 @@
 <!-- App -->
 <div class="container">
 	<div class="loading-init">
-		<div data-year="edit" class="loading-init__header">龙年大吉</div>
+		<div data-year="edit" class="loading-init__header">年大吉🎇</div>
 		<div class="loading-init__status">点击开启 烟花盛宴</div>
 		<div class="developer">powered by 岚漾</div>
 	</div>
@@ -130,11 +130,11 @@
 	</div>
 </div>
 	<script>
-		const year = new Date().getFullYear(), y = +year - 3,
+		const year = new Date().getFullYear(), y = +year - 4,
 			docs = document.querySelectorAll('[data-year="edit"]'),
-			years = '、鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪'.split('、')
+			years = '🐀鼠、🐂牛、🐅虎、🐇兔、🐉龙、🐍蛇、🐎马、🐏羊、🐒猴、🐓鸡、🐕狗、🐖猪'.split('、')
 			
-		docs.forEach(doc => doc.textContent = years[y % 12] + '年大吉')
+		docs.forEach(doc => doc.textContent = years[y % 12] + '年大吉🎇')
 		var _hmt = _hmt || [];
 		(function() {
 			var hm = document.createElement("script");
