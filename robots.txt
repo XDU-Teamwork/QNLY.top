@@ -1,2 +1,11 @@
 User-agent: *
-Allow: *
+Allow: /
+
+Disallow: /.git/
+Disallow: /assets/sass/
+Disallow: /texts/
+Disallow: /portfolio/test/
+Disallow: /*?*
+
+Crawl-delay: 5
+Sitemap: https://www.qnlanyang.top/sitemap.xml
