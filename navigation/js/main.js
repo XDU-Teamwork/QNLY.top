@@ -362,21 +362,20 @@ $(function() {
 })
 
 // 显示/干掉壁纸
-var width = $(document).width();
-$('#bg').click(function() {
+function getTimedBackground() {
+    var width = $(document).width();
+    var hour = new Date().getHours();
     if (width < 768) {
-        if ($('#main').css('background-image') == 'none') {
-            $('#main').css('background-image', 'url(./img/bg-xs.jpg)');
-        } else {
-            $('#main').css('background-image', 'none');
-        }
+        return (hour < 6 || hour > 17) ? 'url(./img/bg-night.jpg)' : 'url(./img/bg-xs.jpg)';
+    }
+    return (hour < 6 || hour > 17) ? 'url(./img/bg-night.jpg)' : 'url(./img/bg.jpg)';
+}
+
+$('#bg').click(function() {
+    if ($('#main').css('background-image') == 'none') {
+        $('#main').css('background-image', getTimedBackground());
     } else {
-        if ($('#main').css('background-image') == 'none') {
-            if (time < 6 || time > 17) $('#main').css('background-image', 'url(./img/bg-night.jpg)');
-            else $('#main').css('background-image', 'url(./img/bg.jpg)');
-        } else {
-            $('#main').css('background-image', 'none');
-        }
+        $('#main').css('background-image', 'none');
     }
     var background = $('#main').css('background-image');
     storage.bg = [background];
@@ -398,19 +397,17 @@ var d = new Date();
 var time = d.getHours();
 if (time < 24) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 晚上好🌃";
-    if (storage.bg != 'none') $('#main').css('background-image', 'url(./img/bg-night.jpg)');
 }
 if (time < 18) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 下午好🍵";
-    if (storage.bg != 'none') $('#main').css('background-image', 'url(./img/bg.jpg)');
 }
 if (time < 12) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 早啊🌞";
 }
 if (time < 5) {
     document.getElementById("title").innerHTML = "岚漾の导航 | 早点睡哦😪";
-    if (storage.bg != 'none') $('#main').css('background-image', 'url(./img/bg-night.jpg)');
 }
+if (storage.bg != 'none') $('#main').css('background-image', getTimedBackground());
 //title问候语结束
 
 //导航、引擎选择器
