@@ -97,7 +97,7 @@
 						<input class="auto-launch" type="checkbox" />
 					</div>
 					<div class="form-option form-option--checkbox form-option--finale-mode">
-						<label class="finale-mode-label">尾杀模式</label>
+						<label class="finale-mode-label">劲爆尾杀</label>
 						<input class="finale-mode" type="checkbox" />
 					</div>
 					<div class="form-option form-option--checkbox">
@@ -109,13 +109,13 @@
 						<input class="fullscreen" type="checkbox" />
 					</div>
 					<div class="form-option form-option--checkbox">
-						<label class="long-exposure-label">快门全开</label>
+						<label class="long-exposure-label">片门全开</label>
 						<input class="long-exposure" type="checkbox" />
 					</div>
 				</form>
 				<div class="credits">
-					Passionately built by <a href="https://cmiller.tech/" target="_blank">Caleb Miller</a>.<br>
-					汉化  by  <a herf="https://space.bilibili.com/24363612">全能岚漾</a>
+					Passionately built by <a href="https://cmiller.tech/" target="_blank" rel="noopener">Caleb Miller</a>.<br>
+					汉化 by <a href="https://space.bilibili.com/24363612" target="_blank" rel="noopener">全能岚漾</a>
 				</div>
 			</div>
 		</div>
@@ -130,11 +130,12 @@
 	</div>
 </div>
 	<script>
-		const year = new Date().getFullYear(), y = +year - 4,
+		const year = new Date().getFullYear(),
 			docs = document.querySelectorAll('[data-year="edit"]'),
 			years = '🐀鼠、🐂牛、🐅虎、🐇兔、🐉龙、🐍蛇、🐎马、🐏羊、🐒猴、🐓鸡、🐕狗、🐖猪'.split('、')
+		const zodiacIndex = ((year - 2020) % 12 + 12) % 12
 			
-		docs.forEach(doc => doc.textContent = years[y % 12] + '年大吉🎇')
+		docs.forEach(doc => doc.textContent = years[zodiacIndex] + '年大吉🎇')
 		var _hmt = _hmt || [];
 		(function() {
 			var hm = document.createElement("script");

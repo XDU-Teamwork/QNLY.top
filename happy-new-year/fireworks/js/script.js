@@ -48,6 +48,10 @@ const QUALITY_HIGH = 3;
 const SKY_LIGHT_NONE = 0;
 const SKY_LIGHT_DIM = 1;
 const SKY_LIGHT_NORMAL = 2;
+const TRAIL_FADE_NORMAL = 0.175;
+const TRAIL_FADE_LONG_EXPOSURE = 0.0025;
+const TRAIL_ALPHA_CUTOFF = 2;
+const TRAIL_CLEANUP_STRIP_HEIGHT = IS_MOBILE ? 32 : 64;
 
 const COLOR = {
 	Red: '#ff0043',
@@ -322,8 +326,8 @@ const helpContent = {
 		body: '自动发射烟花序列。 坐和放宽，享受烟花盛宴，或者关掉这一项，控制权掌握在你的手上。'
 	},
 	finaleMode: {
-		header: '尾杀模式',
-		body: '发射大量烟花，好像表演临近尾声。 可能造成卡顿。 需要开启“表演模式”。'
+		header: '劲爆尾杀',
+		body: '发射大量烟花，营造演出临近尾声的高潮效果。可能造成卡顿，需要先开启“表演模式”。'
 	},
 	hideControls: {
 		header: '隐藏控件',
@@ -334,8 +338,8 @@ const helpContent = {
 		body: '全屏，启动！'
 	},
 	longExposure: {
-		header: '快门全开',
-		body: '实验性功能。 烟花轨迹不会消失。 效果类似长曝光。'
+		header: '片门全开',
+		body: '实验性功能。开启后会保留更长的烟花轨迹，效果类似长曝光摄影。'
 	}
 };
 
@@ -756,7 +760,7 @@ const horsetailShell = (size=1) => {
 };
 
 function randomShellName() {
-	return Math.random() < 0.5 ? '原汁原味' : shellNames[(Math.random() * (shellNames.length - 1) + 1) | 0 ];
+	return Math.random() < 0.5 ? '菊花' : shellNames[(Math.random() * (shellNames.length - 1) + 1) | 0 ];
 }
 
 function randomShell(size) {
@@ -773,7 +777,7 @@ function shellFromConfig(size) {
 // Get a random shell, not including processing intensive varients
 // Note this is only random when "Random" shell is selected in config.
 // Also, this does not create the shell, only returns the factory function.
-const fastShellBlacklist = ['大鎏金', '天女散花', '小鎏金'];
+const fastShellBlacklist = ['落叶', '花束', '垂柳'];
 function randomFastShell() {
 	const isRandom = shellNameSelector() === '随机';
 	let shellName = isRandom ? randomShellName() : shellNameSelector();
@@ -788,17 +792,17 @@ function randomFastShell() {
 
 const shellTypes = {
 	'随机': randomShell,
-	'金色噼里啪啦': crackleShell,
-	'原色噼里啪啦': crossetteShell,
-	'原汁原味': crysanthemumShell,
-	'大鎏金': fallingLeavesShell,
-	'小鎏金': willowShell,
-	'天女散花': floralShell,
-	'昙花一现': ghostShell,
-	'集束炸弹': horsetailShell,
-	'带尾迹小球': palmShell,
-	'环状': ringShell,
-	'亮闪闪': strobeShell
+	'金色爆裂': crackleShell,
+	'十字裂变': crossetteShell,
+	'菊花': crysanthemumShell,
+	'落叶': fallingLeavesShell,
+	'垂柳': willowShell,
+	'花束': floralShell,
+	'幽灵': ghostShell,
+	'马尾': horsetailShell,
+	'棕榈': palmShell,
+	'环形': ringShell,
+	'频闪': strobeShell
 };
 
 const shellNames = Object.keys(shellTypes);
@@ -1365,6 +1369,49 @@ function update(frameTime, lag) {
 	render(speed);
 }
 
+let trailCleanupY = 0;
+
+function cleanupDimTrailPixels() {
+	if (store.state.config.longExposure) {
+		return;
+	}
+
+	const ctx = trailsStage.ctx;
+	const canvas = trailsStage.canvas;
+	const width = canvas.width;
+	const height = canvas.height;
+	if (!width || !height) {
+		return;
+	}
+
+	// Clamp the final 8-bit alpha steps that can round back to themselves.
+	const stripHeight = Math.min(TRAIL_CLEANUP_STRIP_HEIGHT, height);
+	if (trailCleanupY >= height) {
+		trailCleanupY = 0;
+	}
+
+	const y = trailCleanupY;
+	const h = Math.min(stripHeight, height - y);
+	trailCleanupY += stripHeight;
+
+	const image = ctx.getImageData(0, y, width, h);
+	const data = image.data;
+	let changed = false;
+	for (let i = 3; i < data.length; i += 4) {
+		if (data[i] <= TRAIL_ALPHA_CUTOFF && (data[i] || data[i - 1] || data[i - 2] || data[i - 3])) {
+			data[i - 3] = 0;
+			data[i - 2] = 0;
+			data[i - 1] = 0;
+			data[i] = 0;
+			changed = true;
+		}
+	}
+
+	if (changed) {
+		ctx.putImageData(image, 0, y);
+	}
+}
+
 function render(speed) {
 	const { dpr } = mainStage;
 	const width = stageW;
@@ -1381,15 +1428,18 @@ function render(speed) {
 	trailsCtx.scale(dpr * scaleFactor, dpr * scaleFactor);
 	mainCtx.scale(dpr * scaleFactor, dpr * scaleFactor);
 	
-	trailsCtx.globalCompositeOperation = 'source-over';
-	trailsCtx.fillStyle = `rgba(0, 0, 0, ${store.state.config.longExposure ? 0.0025 : 0.175 * speed})`;
+	trailsCtx.globalCompositeOperation = 'destination-out';
+	const trailFade = store.state.config.longExposure ? TRAIL_FADE_LONG_EXPOSURE : Math.min(1, TRAIL_FADE_NORMAL * speed);
+	trailsCtx.fillStyle = `rgba(0, 0, 0, ${trailFade})`;
 	trailsCtx.fillRect(0, 0, width, height);
+	cleanupDimTrailPixels();
 	
 	mainCtx.clearRect(0, 0, width, height);
 	
 	// Draw queued burst flashes
 	// These must also be drawn using source-over due to Safari. Seems rendering the gradients using lighten draws large black boxes instead.
 	// Thankfully, these burst flashes look pretty much the same either way.
+	trailsCtx.globalCompositeOperation = 'source-over';
 	while (BurstFlash.active.length) {
 		const bf = BurstFlash.active.pop();
 		
