@@ -1,29 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🌟听我说谢谢你</title>
     <style>
+        :root {
+            --bg: #f6f3ee;
+            --card: #ffffff;
+            --text: #1f2933;
+            --muted: #667085;
+            --accent: #d14f6f;
+            --accent-soft: #ffe5ec;
+        }
+
         html {
             color-scheme: light dark;
         }
-    
+
         body {
-            width: 35em;
-            margin: 0 auto;
+            min-height: 100vh;
+            margin: 0;
             font-family: Tahoma, Verdana, Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, var(--accent-soft), transparent 34rem),
+                var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        main {
+            width: min(100%, 520px);
+            background: var(--card);
+            border-radius: 8px;
+            box-shadow: 0 18px 50px rgba(31, 41, 51, 0.14);
+            padding: 32px 28px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 14px;
+            font-size: 28px;
+            line-height: 1.25;
+        }
+
+        p {
+            margin: 10px 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .countdown {
+            margin-top: 22px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        #seconds {
+            display: inline-block;
+            min-width: 1.4em;
+        }
+
+        a {
+            color: var(--accent);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #151719;
+                --card: #202429;
+                --text: #f2f4f7;
+                --muted: #c0c6cf;
+                --accent: #ff91aa;
+                --accent-soft: rgba(255, 145, 170, 0.18);
+            }
         }
     </style>
     <script>
         function showAlert() {
             alert("嘿嘿，谢谢你愿意扫这个码。我不要钱，可以的话给我的B站点点关注投投币，给我的GitHub点点star就好。🥰");
         }
+
+        function startCountdown() {
+            showAlert();
+
+            var seconds = 5;
+            var secondsNode = document.getElementById("seconds");
+            var secondsEnNode = document.getElementById("seconds-en");
+
+            function renderCountdown() {
+                secondsNode.textContent = seconds;
+                secondsEnNode.textContent = seconds;
+            }
+
+            renderCountdown();
+
+            var timer = window.setInterval(function() {
+                seconds -= 1;
+                renderCountdown();
+
+                if (seconds <= 0) {
+                    window.clearInterval(timer);
+                    window.location.href = "donate.html";
+                }
+            }, 1000);
+        }
     </script>
 </head>
 
-<body onload="showAlert()">
-    <h1>This page tells you not to give me money.</h1>
+<body onload="startCountdown()">
+    <main>
+        <h1>谢谢你，但不用真的打赏</h1>
+        <p>这个二维码只是一个小彩蛋。你愿意扫进来已经很好啦。</p>
+        <p>This QR code is just a tiny easter egg. Thank you for checking it out, but please do not actually send money.</p>
+        <p class="countdown"><span id="seconds">5</span> 秒后返回打赏页 / Returning to the donation page in <span id="seconds-en">5</span>s</p>
+        <p><a href="donate.html">立即返回 / Return now</a></p>
+    </main>
 </body>
 
 </html>
